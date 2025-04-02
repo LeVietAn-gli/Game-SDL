@@ -26,8 +26,9 @@ int main(int argc, char *argv[]) {
     graphics.setIcon(WINDOW_ICON_PATH);
 
     // Load font
-    TTF_Font* font = graphics.loadFont(FONT_PATH, TEXT_SIZE_BIG);
+    TTF_Font* font = graphics.loadFont(FONT_PATH, TEXT_SIZE);
     SDL_Color colorRed = {255, 0, 0, 255};
+    SDL_Color colorWhite ={255, 255, 255, 255};
 
     //Text intro
     SDL_Texture* textTextureIntro = graphics.renderText("FLAPPY  RED  BIRD", font, colorRed);
@@ -35,46 +36,44 @@ int main(int argc, char *argv[]) {
     SDL_Texture* textTextureguide = graphics.renderText("Press to play", font, colorRed);
     SDL_QueryTexture(textTextureIntro, NULL, NULL, &textWidth, &textHeight);
     SDL_Rect textIntro;
-    textIntro.x = (SCREEN_WIDTH - textWidth) / 2;  // Căn giữa theo chiều ngang
-    textIntro.y = (SCREEN_HEIGHT - textHeight) / 2; // Căn giữa theo chiều dọc
+    textIntro.x = (SCREEN_WIDTH - textWidth) / 2;
+    textIntro.y = (SCREEN_HEIGHT - textHeight) / 2;
     textIntro.w = textWidth;
     textIntro.h = textHeight;
 
     //Text Lost
     SDL_Texture* textTextureLost = graphics.renderText("YOU LOST!", font, colorRed);
-    int textW, textH;
-    SDL_QueryTexture(textTextureLost, NULL, NULL, &textW, &textH);
+    SDL_QueryTexture(textTextureLost, NULL, NULL, &textWidth, &textHeight);
     SDL_Rect textLost;
-    textLost.x = (SCREEN_WIDTH - textW) / 2;  // Căn giữa theo chiều ngang
-    textLost.y = (SCREEN_HEIGHT - textH) / 2; // Căn giữa theo chiều dọc
-    textLost.w = textW;
-    textLost.h = textH - 10;
+    textLost.x = (SCREEN_WIDTH - textWidth) / 2 - 20;
+    textLost.y = (SCREEN_HEIGHT - textHeight) / 2 - 40;
+    textLost.w = textWidth + 50;
+    textLost.h = textHeight + 5;
 
-    //Text guide play again
-    SDL_Texture* textTextureAgain = graphics.renderText("Press to play again", font, colorRed);
-    int textWa, textHa;
-    SDL_QueryTexture(textTextureAgain, NULL, NULL, &textWa, &textHa);
+    //Text play again
+    SDL_Texture* textTextureAgain = graphics.renderText("Press to play again", font, colorWhite);
+    SDL_QueryTexture(textTextureLost, NULL, NULL, &textWidth, &textHeight);
     SDL_Rect textAgain;
-    textLost.x = (SCREEN_WIDTH - textW) / 2;  // Căn giữa theo chiều ngang
-    textLost.y = (SCREEN_HEIGHT - textH) / 2 + 30 ; // Căn giữa theo chiều dọc
-    textLost.w = textWa;
-    textLost.h = textHa;
+    textAgain.x = (SCREEN_WIDTH - textWidth) / 2 + 8;
+    textAgain.y = (SCREEN_HEIGHT - textHeight) / 2 + 30;
+    textAgain.w = textWidth;
+    textAgain.h = textHeight - 5;
 
-    // Load âm thanh
+    // Load music
     Mix_Music *gMusic = graphics.loadMusic(MUSIC_THEME_PATH);
     graphics.play(gMusic);
     Mix_Chunk *gJump = graphics.loadSound(SOUND_JUMP);
     Mix_Chunk *gLost = graphics.loadSound(SOUND_LOST);
     Mix_Chunk *gScore = graphics.loadSound(SOUND_PASSED);
 
-    // Load hình ảnh
+    // Load texture
     background.setTexture(graphics.loadTexture(BACKGROUND_IMG));
     Sprite bird;
     SDL_Texture* birdTexture = graphics.loadTexture(BIRD_IMAGE);
     SDL_Texture* pipeTexture = graphics.loadTexture(PIPE_IMAGE);
     bird.init(birdTexture, BIRD_FRAMES, BIRD_CLIPS);
 
-    // Tạo danh sách ống
+    // Creat pipes
     vector<Pipe> pipes;
     generatePipes(pipes);
 
@@ -115,7 +114,7 @@ int main(int argc, char *argv[]) {
                     y = 200;
                     pipes.clear();
                     generatePipes(pipes);
-                    score = 0; // Reset score khi bắt đầu lại
+                    score = 0;
                     v = 6;
                     graphics.play(gJump);
                 } else {
@@ -129,30 +128,34 @@ int main(int argc, char *argv[]) {
             if (y < 0) y = 0;
             logic.fall(y);
 
-            // Kiểm tra va chạm
+            // checkCollision
             if (checkCollision(x, y, birdRadius, pipes) || y >= SCREEN_HEIGHT - 70) {
                 resume = false;
                 graphics.play(gLost);
             }
 
-            // Cập nhật điểm số
+            // update score
             if(updateScore(score, x + 53, pipes)) graphics.play(gScore);
             if(score%10 == 0 && score !=0 && v < 10) v = v + 0.02;
 
-            // Cập nhật chim và ống
+            // update bird and pos pipe, v pipe
             bird.tick();
             updatePipes(pipes, v);
 
-            // Vẽ lại màn hình
+            // render screen
             graphics.prepareScene();
             background.scroll(1);
             graphics.render(background);
             renderPipes(graphics.renderer, pipeTexture, pipes);
             graphics.render(x, y, bird, logic.getAngle());
 
-            renderScore(graphics, font, score); // Hiển thị điểm số
+            renderScore(graphics, font, score, 20, 20); //show score on the left top
+
+            // Show Lost
             if (!resume){
-                SDL_RenderCopy(graphics.renderer, textTextureLost, NULL, &textIntro);
+                SDL_RenderCopy(graphics.renderer, textTextureLost, NULL, &textLost);
+                renderScore(graphics, font, score, SCREEN_WIDTH/2 - 50, SCREEN_HEIGHT/2 - 18);
+                SDL_RenderCopy(graphics.renderer, textTextureAgain, NULL, &textAgain);
                 graphics.presentScene();
             }
             graphics.presentScene();
@@ -161,7 +164,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // Giải phóng tài nguyên
+    // liberate
     if (gMusic != nullptr) Mix_FreeMusic(gMusic);
     if (gJump != nullptr) Mix_FreeChunk(gJump);
     if (gLost != nullptr) Mix_FreeChunk(gLost);

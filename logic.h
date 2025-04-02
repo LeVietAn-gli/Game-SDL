@@ -75,13 +75,13 @@ bool updateScore(int& score, int birdX, std::vector<Pipe>& pipes) {
     return flag;
 }
 
-void renderScore(Graphics& graphics, TTF_Font* font, int score) {
+void renderScore(Graphics& graphics, TTF_Font* font, int score, int scoreX, int scoreY) {
     SDL_Color color = {255, 255, 255, 255}; // Màu trắng
     std::string scoreText = "Score: " + std::to_string(score);
     SDL_Texture* scoreTexture = graphics.renderText(scoreText.c_str(), font, color);
 
     if (scoreTexture) {
-        graphics.renderTexture(scoreTexture, 20, 20); // Hiển thị điểm ở góc trên trái
+        graphics.renderTexture(scoreTexture, scoreX, scoreY);
         SDL_DestroyTexture(scoreTexture);
     }
 }

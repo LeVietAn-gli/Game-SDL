@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1743580064 source:a:\lap trinh nang cao\game sdl\main.cpp
+1743615252 source:a:\lap trinh nang cao\game sdl\main.cpp
 	"graphics.h"
 	"defs.h"
 	"pipe.h"
@@ -20,7 +20,7 @@
 	<string>
 	<SDL.h>
 
-1743519026 a:\lap trinh nang cao\game sdl\defs.h
+1743613329 a:\lap trinh nang cao\game sdl\defs.h
 
 1743578259 a:\lap trinh nang cao\game sdl\pipe.h
 	"graphics.h"
@@ -28,7 +28,7 @@
 	<SDL.h>
 	<cstdlib>
 
-1743577520 a:\lap trinh nang cao\game sdl\logic.h
+1743614972 a:\lap trinh nang cao\game sdl\logic.h
 	<cmath>
 	"graphics.h"
 	<SDL_mixer.h>

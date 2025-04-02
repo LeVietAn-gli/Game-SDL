@@ -4,7 +4,6 @@
 #define WINDOW_ICON_PATH "assets\\icon_redbird.png"
 
 #define BACKGROUND_IMG "assets\\background.png"
-#define BACKGROUND_GAMEOVER "assets\\background.png"
 
 #define FONT_PATH "assets\\MouldyCheeseRegular-WyMWG.ttf"
 
@@ -16,8 +15,7 @@
 #define PIPE_IMAGE "assets\\pipe.png"
 #define BIRD_IMAGE "assets\\flappy.png"
 
-#define TEXT_SIZE_BIG 30
-#define TEXT_SIZE_SMALL 16
+#define TEXT_SIZE 30
 
 enum class GameStates {
     Intro,
