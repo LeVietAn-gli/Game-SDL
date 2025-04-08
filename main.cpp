@@ -18,7 +18,9 @@ int main(int argc, char *argv[]) {
     int x = 150;
     int y = SCREEN_HEIGHT/2;
     int score = 0;
+    int highscore = 0;
     bool resume = false;
+    bool highsc;
     double v = 6;
 
     logicBird logic;
@@ -88,6 +90,7 @@ int main(int argc, char *argv[]) {
 
             while (SDL_PollEvent(&e) != 0) {
                 if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_ESCAPE) {
+                    intro = false;
                     quit = true;
                 } else if ((e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_SPACE) || e.type == SDL_MOUSEBUTTONDOWN){
                     intro = false;
@@ -114,6 +117,7 @@ int main(int argc, char *argv[]) {
                     y = 200;
                     pipes.clear();
                     generatePipes(pipes);
+                    if (highscore < score) highscore = score;
                     score = 0;
                     v = 6;
                     graphics.play(gJump);
@@ -150,6 +154,7 @@ int main(int argc, char *argv[]) {
             graphics.render(x, y, bird, logic.getAngle());
 
             renderScore(graphics, font, score, 20, 20); //show score on the left top
+            renderhighScore(graphics, font, highscore, 20, 50);
 
             // Show Lost
             if (!resume){
